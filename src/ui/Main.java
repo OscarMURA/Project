@@ -10,7 +10,7 @@ public class Main {
 
 	private Scanner reader;
 	private Controller controller;
-	private SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 
 	public Main() {
 		reader = new Scanner(System.in);
@@ -21,11 +21,12 @@ public class Main {
 		double option = 0;
 		Main exe = new Main();
 		do {
-
+			System.out.println("\nWelcome\n");
 			exe.menu();
 			do {
+				System.out.print("Type: ");
 				option = exe.validateDouble();
-			} while (option != 1 && option != 2 && option != 3);
+			} while (option != 1 && option != 2 && option != 3 && option!=0);
 			switch ((int) option) {
 				case 1:
 					exe.RegisterProject();
@@ -36,6 +37,9 @@ public class Main {
 				case 3:
 					exe.searchProjectsAfterDate();
 					break;
+				case 0:
+					System.out.println("Exit");
+					break;
 			}
 
 		} while (option != 0);
@@ -45,7 +49,7 @@ public class Main {
 	public void menu() {
 
 		System.out.println(
-				"1. Create Project\n2. Search Projects ending before a date\n3. Search Projects starting after a date");
+				"1. Create Project\n2. Search Projects ending before a date\n3. Search Projects starting after a date\n0.Exit");
 	}
 
 	/**
@@ -77,9 +81,9 @@ public class Main {
 		}
 
 		do {
-			System.out.println("Enter start date\n ");
+			System.out.println("\nEnter start date\n ");
 			startDate = assingDate();
-			System.out.println("Enter end date\n ");
+			System.out.println("\nEnter end date\n ");
 			endDate = assingDate();
 
 			if (startDate.compareTo(endDate) > 0) {
@@ -134,7 +138,7 @@ public class Main {
 		System.out.println("Search for projects starting before a date");
 		Calendar after = Calendar.getInstance();
 		after = assingDate();
-		System.out.println(controller.searchProjectsAfterDate(after));
+		System.out.println(controller.searchProjectsBeforeDate(after));
 	}
 
 	/**
@@ -147,18 +151,18 @@ public class Main {
 	public Calendar assingDate() {
 		Calendar dateCal = Calendar.getInstance();
 		boolean follow;
-		System.out.println("Date format: dd/MM/yyyy. Example: 22/02/2023");
+		System.out.println("Date format: dd-MM-yyyy. Example: 22-02-2023");
 
 		do {
 			follow = false;
 			String date = "";
-			System.out.println("Enter date: ");
+			System.out.print("Enter date: ");
 			date = reader.next();
 			try {
 				dateCal.setTime(format.parse(date));
 				follow = true;
 			} catch (ParseException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 				System.out.println("Please enter date correctly");
 			}
 		} while (!follow);

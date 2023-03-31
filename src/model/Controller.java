@@ -39,12 +39,14 @@ public class Controller {
 	public String searchProjectsAfterDate(Calendar after) {
 
 		String msg = "Projects: ";
+
 		int j=1;
 		for (int i = 0; i < counter; i++) {
 			if(after.compareTo( projects[i].getInitialDate()  ) < 0){
 				msg+="\n"+(j++)+"."+projects[i].getName();
 			
 		}
+	}
 		msg=(msg.equalsIgnoreCase("Projects: "))?"No exist project":msg;
 
 		return msg;
@@ -75,4 +77,5 @@ public class Controller {
 		msg = (msg.equalsIgnoreCase("Projects: ")) ? "No exist project" : msg;
 		return msg;
 	}
+
 }
