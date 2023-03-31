@@ -1,49 +1,44 @@
 package ui;
 
 import java.util.Scanner;
-
-import javax.swing.CellEditor;
-
 import model.Controller;
 import java.util.Calendar;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
-//
 public class Main {
 
 	private Scanner reader;
 	private Controller controller;
 	private SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
-	/*
-	 * En Green al aceptar un proyecto de un cliente se debe registrar el mismo
-	 * almacenando
-	 * la siguiente información: nombre del proyecto, nombre del cliente, tipo de
-	 * proyecto
-	 * (puede ser Desarrollo, Mantenimiento, Despliegue), fecha planeada para el
-	 * inicio del
-	 * proyecto y fecha planeada para la finalización del proyecto, el valor
-	 * correspondiente al presupuesto del proyecto.
-	 */
 	public Main() {
-
 		reader = new Scanner(System.in);
 		controller = new Controller();
 	}
 
 	public static void main(String[] args) {
-
+		int option=0;
 		Main exe = new Main();
-		exe.menu();
-		exe.RegisterProject();
+		do{
 
+		
+		exe.menu();
+		option=exe.validateOption();
+
+		switch(option){
+			case 1->exe.RegisterProject();
+			case 2->exe.searchProjectsBeforeDate();
+			case 3->exe.searchProjectsAfterDate();
+		}
+		
+		}while(option!=0);
 	}
 
 	// Incomplete
 	public void menu() {
 
-		System.out.println("1.Crear Pryecto\n2.Buscar Proyecto que finalizan antes de una fecha\n3.ConsultarProyectos que inicia despues de una fecha");
+		System.out.println(
+				"1.Crear Pryecto\n2.Buscar Proyecto que finalizan antes de una fecha\n3.ConsultarProyectos que inicia despues de una fecha");
 	}
 
 	// Incomplete
@@ -74,49 +69,35 @@ public class Main {
 			case 3 -> typeProject = "Despliegue";
 		}
 
-		do{
-		for (int i = 0; i < 2; i++) {
-			boolean follow;
+		do {
+			System.out.println("Ingrese la fecha de inicio: ");
+			startDate=assingDate();
+			System.out.println("Ingrese la fecha final: ");
+			endDate=assingDate();
 
-			do {
-				follow = false;
+			if(startDate.compareTo(endDate) > 0){
+				System.out.println("La fecha final no puede ir antes que la inicial");
+			}
+		} while (startDate.compareTo(endDate) > 0);
+		System.out.print("\nIngrese cuanto el presupuesto del proyecto: ");
+		budget = validateDouble();
 
-				int year = 0;
-				int month = 0;
-				int day = 0;
-				String fecha = (i == 0) ? "de inicio" : "Final";
-				System.out.println("Ingrese la fecha " + fecha + ": ");
-				System.out.print("Ingrese año: ");
-				year = validateOption();
-				System.out.print("Ingrese el mes: ");
-				month = validateOption();
-				System.out.print("Ingrese el dia: ");
-				day = validateOption();
-				date = day + "/" + month + "/" + year;
+		System.out.println(controller.RegisterProject(nameProject, nameClient, startDate, endDate, budget));
 
-				if (i == 0) {
-					try {
-						startDate.setTime(format.parse(date));
-						follow = true;
-					} catch (ParseException e) {
-						e.printStackTrace();
-						System.out.println("Correctamente");
-					}
-				}
-				{
-					try {
-						endDate.setTime(format.parse(date));
-						follow = true;
-					} catch (ParseException e) {
-						e.printStackTrace();
-						System.out.println("Correctamente");
-					}
-				}
-			} while (!follow);
+	}
 
-		}
-		}while( startDate.compareTo(endDate)>0);		
-
+	public double validateDouble() {
+		double option = 0;
+		do {
+			if (reader.hasNextDouble()) {
+				option = reader.nextDouble();
+			} else {
+				reader.next();// limpiar el scanner
+				option = Integer.MAX_VALUE;
+				System.out.print("Invalid number, type a number: ");
+			}
+		} while (option == Integer.MAX_VALUE);
+		return option;
 	}
 
 	public int validateOption() {
@@ -135,11 +116,47 @@ public class Main {
 
 	// Incomplete
 	public void searchProjectsAfterDate() {
-
+		Calendar after = Calendar.getInstance();
+		System.out.println("Buscar projectos que inicia depues de una fecha");
+		after=assingDate();
+		System.out.println( controller.searchProjectsAfterDate(after) );
 	}
 
 	// Incomplete
 	public void searchProjectsBeforeDate() {
-
+		System.out.println("Buscar proyecto antes de la finalizacion de la fecha ");
+		Calendar after = Calendar.getInstance();
+		after=assingDate();
+		System.out.println( controller.searchProjectsAfterDate(after) );
 	}
+
+	public Calendar assingDate(){
+		Calendar date1=Calendar.getInstance();
+		boolean follow;
+		do {
+			follow = false;
+			String date = "";
+			int year = 0;
+			int month = 0;
+			int day = 0;
+			System.out.println("Ingrese la fecha : ");
+			System.out.print("Ingrese año: ");
+			year = validateOption();
+			System.out.print("Ingrese el mes: ");
+			month = validateOption();
+			System.out.print("Ingrese el dia: ");
+			day = validateOption();
+			date = day + "/" + month + "/" + year;
+			try {
+				date1.setTime(format.parse(date));
+				follow = true;
+			} catch (ParseException e) {
+				e.printStackTrace();
+				System.out.println("Correctamente");
+			}
+		} while (!follow);
+		
+		return date1;
+	}
+
 }
