@@ -5,6 +5,7 @@ import model.Controller;
 import java.util.Calendar;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 public class Main {
 
 	private Scanner reader;
@@ -17,146 +18,152 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		int option=0;
+		double option = 0;
 		Main exe = new Main();
-		do{
+		do {
 
-		
-		exe.menu();
-		option=exe.validateOption();
+			exe.menu();
+			do {
+				option = exe.validateDouble();
+			} while (option != 1 && option != 2 && option != 3);
+			switch ((int) option) {
+				case 1:
+					exe.RegisterProject();
+					break;
+				case 2:
+					exe.searchProjectsBeforeDate();
+					break;
+				case 3:
+					exe.searchProjectsAfterDate();
+					break;
+			}
 
-		switch(option){
-			case 1->exe.RegisterProject();
-			case 2->exe.searchProjectsBeforeDate();
-			case 3->exe.searchProjectsAfterDate();
-		}
-		
-		}while(option!=0);
+		} while (option != 0);
 	}
 
 	// Incomplete
 	public void menu() {
 
 		System.out.println(
-				"1.Crear Pryecto\n2.Buscar Proyecto que finalizan antes de una fecha\n3.ConsultarProyectos que inicia despues de una fecha");
+				"1. Create Project\n2. Search Projects ending before a date\n3. Search Projects starting after a date");
 	}
 
-	// Incomplete
 	/**
-	 * 
+	 * Registers a new project by requesting input from the user for the project name, client name,
+	 * project type, start and end dates, and budget. Validates the input and sends
+	 * it to the controller for registration.
 	 */
 	public void RegisterProject() {
 
 		String nameProject = "", nameClient = "", typeProject = "", date = "";
 		Calendar endDate = Calendar.getInstance(), startDate = Calendar.getInstance();
 		double budget = 0;
-		int tipo = 0;
+		double tipo = 0;
 
-		System.out.println("\3Registro del proyecto\3\n");
-		System.out.print("Ingrese el nombre del proyecto: ");
+		System.out.println("\3Project Registration\3\n");
+		System.out.print("Enter Project Name: ");
 		nameProject = reader.next();
-		System.out.print("Ingrese el nombre del cliente: ");
+		System.out.print("Enter Client Name: ");
 		nameClient = reader.next();
-		System.out.println("Ingrese tipo del proyecto: 1. Desarrollo, 2.Mantenimiento, 3.Despliegue");
+		System.out.println("Enter project type: 1. Development, 2. Maintenance, 3. Deployment");
 		do {
 			System.out.print("Type: ");
-			tipo = validateOption();
+			tipo = validateDouble();
 		} while (tipo != 1 && tipo != 2 && tipo != 3);
-
-		switch (tipo) {
-			case 1 -> typeProject = "Desarrollo";
-			case 2 -> typeProject = "Mantenimiento";
-			case 3 -> typeProject = "Despliegue";
+		switch ((int) tipo) {
+			case 1 -> typeProject = "Development";
+			case 2 -> typeProject = "Maintenance";
+			case 3 -> typeProject = "Deployment";
 		}
 
 		do {
-			System.out.println("Ingrese la fecha de inicio: ");
-			startDate=assingDate();
-			System.out.println("Ingrese la fecha final: ");
-			endDate=assingDate();
+			System.out.println("Enter start date\n ");
+			startDate = assingDate();
+			System.out.println("Enter end date\n ");
+			endDate = assingDate();
 
-			if(startDate.compareTo(endDate) > 0){
-				System.out.println("La fecha final no puede ir antes que la inicial");
+			if (startDate.compareTo(endDate) > 0) {
+				System.out.println("End date cannot be before start date");
 			}
 		} while (startDate.compareTo(endDate) > 0);
-		System.out.print("\nIngrese cuanto el presupuesto del proyecto: ");
+		System.out.print("\nEnter project budget: ");
 		budget = validateDouble();
 
-		System.out.println(controller.RegisterProject(nameProject, nameClient, startDate, endDate, budget));
-
+		System.out
+				.println(controller.RegisterProject(nameProject, nameClient, startDate, endDate, budget, typeProject));
 	}
 
+	/**
+	 * This method validates user input to ensure it is a valid double value. It prompts the user to enter
+	 * a number and checks if it can be parsed as a double. If the input is not a valid double, it clears
+	 * the scanner and prompts the user to enter a valid number until it receives one.
+	 * 
+	 * @return Finally, it returns the valid double value entered by the user.
+	 */
 	public double validateDouble() {
 		double option = 0;
 		do {
 			if (reader.hasNextDouble()) {
 				option = reader.nextDouble();
 			} else {
-				reader.next();// limpiar el scanner
+				reader.next();// clear the scanner
 				option = Integer.MAX_VALUE;
-				System.out.print("Invalid number, type a number: ");
+				System.out.print("Invalid number, please enter a number: ");
 			}
 		} while (option == Integer.MAX_VALUE);
 		return option;
 	}
 
-	public int validateOption() {
-		int option = 0;
-		do {
-			if (reader.hasNextInt()) {
-				option = reader.nextInt();
-			} else {
-				reader.next();
-				System.out.print("Invalid number! Type number: ");
-				option = Integer.MAX_VALUE;
-			}
-		} while (option == Integer.MAX_VALUE);
-		return option;
-	}
-
-	// Incomplete
+	/**
+	 * This method allows the user to search for projects starting after a given
+	 * date. It prompts the user to input a date and calls the controller to retrieve and
+	 * return a list of projects that start after that date.
+	 */
 	public void searchProjectsAfterDate() {
 		Calendar after = Calendar.getInstance();
-		System.out.println("Buscar projectos que inicia depues de una fecha");
-		after=assingDate();
-		System.out.println( controller.searchProjectsAfterDate(after) );
+		System.out.println("Search for projects starting after a date");
+		after = assingDate();
+		System.out.println(controller.searchProjectsAfterDate(after));
 	}
 
-	// Incomplete
+	/**
+	 * Searches for projects starting before a given date and prints the results.
+	 * This information is used by GreenSQA to plan their deadlines and workload.
+	 */
 	public void searchProjectsBeforeDate() {
-		System.out.println("Buscar proyecto antes de la finalizacion de la fecha ");
+		System.out.println("Search for projects starting before a date");
 		Calendar after = Calendar.getInstance();
-		after=assingDate();
-		System.out.println( controller.searchProjectsAfterDate(after) );
+		after = assingDate();
+		System.out.println(controller.searchProjectsAfterDate(after));
 	}
 
-	public Calendar assingDate(){
-		Calendar date1=Calendar.getInstance();
+	/**
+	 * Prompts the user to enter a date in the format "dd/MM/yyyy",
+	 * and validates the input to ensure that it is a valid date. Returns
+	 * a Calendar object representing the date entered by the user.
+	 * 
+	 * @return A Calendar object representing the date entered by the user.
+	 */
+	public Calendar assingDate() {
+		Calendar dateCal = Calendar.getInstance();
 		boolean follow;
+		System.out.println("Date format: dd/MM/yyyy. Example: 22/02/2023");
+
 		do {
 			follow = false;
 			String date = "";
-			int year = 0;
-			int month = 0;
-			int day = 0;
-			System.out.println("Ingrese la fecha : ");
-			System.out.print("Ingrese año: ");
-			year = validateOption();
-			System.out.print("Ingrese el mes: ");
-			month = validateOption();
-			System.out.print("Ingrese el dia: ");
-			day = validateOption();
-			date = day + "/" + month + "/" + year;
+			System.out.println("Enter date: ");
+			date = reader.next();
 			try {
-				date1.setTime(format.parse(date));
+				dateCal.setTime(format.parse(date));
 				follow = true;
 			} catch (ParseException e) {
 				e.printStackTrace();
-				System.out.println("Correctamente");
+				System.out.println("Please enter date correctly");
 			}
 		} while (!follow);
-		
-		return date1;
+
+		return dateCal;
 	}
 
 }

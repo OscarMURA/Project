@@ -3,7 +3,6 @@ package model;
 import java.util.Calendar;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
 import java.text.ParseException;
 
 
@@ -14,18 +13,22 @@ public class Project{
 	private Calendar initialDate;
 	private Calendar finalDate;
 	private double budget;
-
+	private String typeProject;
 	private DateFormat formatter;
 
-	public Project(String name, String clientName, Calendar initialDate, Calendar finalDate, double budget){
+	public Project(String name, String clientName, Calendar initialDate, Calendar finalDate, double budget,String typeProject){
 		
 		this.formatter = new SimpleDateFormat("dd/M/yy");
-
 		this.name = name;	
 		this.clientName = clientName;
 		this.initialDate = initialDate;
 		this.finalDate = finalDate;
 		this.budget = budget;
+		this.typeProject=typeProject;
+	}
+
+	public String getTypeProject() {
+		return typeProject;
 	}
 
 	public String getName(){
